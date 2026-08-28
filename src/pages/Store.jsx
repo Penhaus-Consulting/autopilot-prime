@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Zap, Star, Check, Loader2, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export default function Store() {
   const qc = useQueryClient();
