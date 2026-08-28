@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
-import { Receipt, Search, Filter, X } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Receipt, Search, Filter, X, Star, CheckCircle2, Loader2 } from "lucide-react";
 import FormSelect from "@/components/FormSelect";
+import { useToast } from "@/components/ui/use-toast";
 
 const statuses = ["paid", "fulfilled", "refunded"];
 
@@ -17,7 +18,14 @@ export default function Orders() {
     queryKey: ["orders"],
     queryFn: () => base44.entities.Order.list("-created_date", 200),
   });
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  const { data: feedback = [] } = useQuery({
+    queryKey: ["order-feedback"],
+    queryFn: () => base44.entities.Feedback.list("-created_date", 200),
+  });
 
+  const [fulfilling, setFulfilling] = useState({});
   const [query, setQuery] = useState("");
   const [minAmt, setMinAmt] = useState("");
   const [maxAmt, setMaxAmt] = useState("");
@@ -50,6 +58,31 @@ export default function Orders() {
     setMinAmt("");
     setMaxAmt("");
     setStatus("all");
+  };
+
+  const feedbackByOrder = useMemo(() => {
+    const m = {};
+    feedback.forEach((f) => { if (f.order_id) m[f.order_id] = f; });
+    return m;
+  }, [feedback]);
+
+  const markFulfilled = async (o) => {
+    setFulfilling((s) => ({ ...s, [o.id]: true }));
+    try {
+      await base44.entities.Order.update(o.id, { status: "fulfilled" });
+      qc.invalidateQueries(["orders"]);
+      try {
+        await base44.functions.invoke("requestServiceFeedback", { order_id: o.id });
+        toast({ title: "Marked fulfilled", description: "Rating request sent to customer." });
+      } catch (e) {
+        toast({ title: "Marked fulfilled", description: "Rating link ready to share with customer." });
+      }
+      qc.invalidateQueries(["order-feedback"]);
+    } catch (e) {
+      toast({ title: "Could not update order", variant: "destructive" });
+    } finally {
+      setFulfilling((s) => ({ ...s, [o.id]: false }));
+    }
   };
 
   return (
@@ -128,11 +161,11 @@ export default function Orders() {
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
         {/* Desktop table header */}
         <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-3 border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-500">
-          <div className="col-span-4">Customer</div>
+          <div className="col-span-3">Customer</div>
           <div className="col-span-3">Service</div>
           <div className="col-span-2">Date</div>
           <div className="col-span-2">Amount</div>
-          <div className="col-span-1 text-right">Status</div>
+          <div className="col-span-2 text-right">Status / Feedback</div>
         </div>
         <div className="divide-y divide-zinc-800">
           {isLoading && (
@@ -145,15 +178,26 @@ export default function Orders() {
           )}
           {filtered.map((o) => (
             <div key={o.id} className="px-5 py-4 lg:grid lg:grid-cols-12 lg:gap-4 lg:items-center flex flex-col gap-2">
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-3">
                 <div className="text-sm text-zinc-100 font-medium">{o.customer_name || "—"}</div>
                 <div className="text-xs text-zinc-500">{o.customer_email || ""}</div>
               </div>
               <div className="lg:col-span-3 text-sm text-zinc-300">{o.service_name || "—"}</div>
               <div className="lg:col-span-2 text-xs text-zinc-500">{dateFmt(o.created_date)}</div>
               <div className="lg:col-span-2 text-sm font-semibold text-emerald-400">{fmt(o.amount)}</div>
-              <div className="lg:col-span-1 lg:text-right">
+              <div className="lg:col-span-2 lg:text-right flex lg:justify-end items-center gap-2 flex-wrap">
                 <StatusBadge status={o.status} />
+                {o.status === "paid" && (
+                  <button
+                    onClick={() => markFulfilled(o)}
+                    disabled={!!fulfilling[o.id]}
+                    className="flex items-center gap-1 text-[11px] px-2 py-1 rounded bg-emerald-400/10 text-emerald-400 hover:bg-emerald-400/20 transition-colors disabled:opacity-50"
+                  >
+                    {fulfilling[o.id] ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
+                    Mark Fulfilled
+                  </button>
+                )}
+                {o.status === "fulfilled" && <FeedbackBadge feedback={feedbackByOrder[o.id]} />}
               </div>
             </div>
           ))}
@@ -179,4 +223,29 @@ function StatusBadge({ status }) {
     refunded: "bg-red-400/10 text-red-400",
   };
   return <span className={`px-2 py-0.5 rounded text-xs font-medium ${map[status] || "bg-zinc-800 text-zinc-400"}`}>{status || "—"}</span>;
+}
+
+function StarsRow({ rating }) {
+  return (
+    <span className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star
+          key={n}
+          className={`w-3 h-3 ${n <= rating ? "text-amber-400 fill-amber-400" : "text-zinc-700"}`}
+        />
+      ))}
+    </span>
+  );
+}
+
+function FeedbackBadge({ feedback }) {
+  if (!feedback) {
+    return <span className="text-[10px] text-zinc-600">Awaiting feedback</span>;
+  }
+  return (
+    <span className="flex items-center gap-1" title={feedback.comment || ""}>
+      <StarsRow rating={feedback.rating} />
+      <span className="text-xs text-zinc-400">{feedback.rating}.0</span>
+    </span>
+  );
 }
