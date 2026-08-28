@@ -5,7 +5,7 @@ import { Receipt, Search, Filter, X, Star, CheckCircle2, Loader2 } from "lucide-
 import FormSelect from "@/components/FormSelect";
 import { useToast } from "@/components/ui/use-toast";
 
-const statuses = ["paid", "fulfilled", "refunded"];
+const statuses = ["paid", "fulfilled"];
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(n || 0);
@@ -99,7 +99,7 @@ export default function Orders() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <Stat label="Total Orders" value={filtered.length} />
         <Stat label="Filtered Revenue" value={fmt(totalRevenue)} />
-        <Stat label="Refunded" value={filtered.filter((o) => o.status === "refunded").length} />
+        <Stat label="Fulfilled" value={filtered.filter((o) => o.status === "fulfilled").length} />
       </div>
 
       {/* Filter bar */}
@@ -137,6 +137,25 @@ export default function Orders() {
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none"
             />
           </div>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap mt-3">
+          {[
+            { value: "all", label: "All" },
+            { value: "paid", label: "Pending" },
+            { value: "fulfilled", label: "Completed" },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setStatus(opt.value)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                status === opt.value
+                  ? "bg-emerald-400 text-zinc-950"
+                  : "bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-zinc-100"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
         <div className="flex items-center justify-between gap-3 mt-3">
           <div className="w-40">

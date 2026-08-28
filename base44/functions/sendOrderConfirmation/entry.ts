@@ -1,7 +1,30 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
+// Build an RFC 2822 MIME message with proper UTF-8 / RFC 2047 encoding for Gmail's API.
+function buildRawMime({ from, to, subject, html }) {
+  const enc = (s) => btoa(unescape(encodeURIComponent(s)));
+  const encodedSubject = /[^\x00-\x7F]/.test(subject)
+    ? `=?UTF-8?B?${enc(subject)}?=`
+    : subject;
+  const bodyB64 = enc(html);
+  const wrapped = bodyB64.match(/.{1,76}/g).join("\r\n");
+  const headers = [
+    `To: ${to}`,
+    `Subject: ${encodedSubject}`,
+    "MIME-Version: 1.0",
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+  ];
+  if (from) headers.unshift(`From: ${from}`);
+  return [...headers, "", wrapped].join("\r\n");
+}
+
+function base64urlEncode(str) {
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
 // Invoked by the "Order Confirmation Email" workflow whenever a new Order is created.
-// Re-fetches the order, then emails the buyer an immediate confirmation.
+// Re-fetches the order, then emails the buyer an immediate confirmation via Gmail.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -56,14 +79,30 @@ export default async function(req) {
       `</div>`,
     ].join("");
 
-    await db.integrations.Core.SendEmail({
+    // Send via the builder's connected Gmail account (shared connector).
+    const { accessToken } = await db.connectors.getConnection("gmail");
+
+    const rawMime = buildRawMime({
       to: email,
       subject,
-      body: body_html,
-      from_name: "PENHAUS Digital",
+      html: body_html,
     });
 
-    console.log("sendOrderConfirmation: email sent", { orderId, email });
+    const sendRes = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ raw: base64urlEncode(rawMime) }),
+    });
+    if (!sendRes.ok) {
+      const errText = await sendRes.text();
+      console.error("sendOrderConfirmation: gmail send failed", { status: sendRes.status, errText });
+      throw new Error(`Gmail send failed (${sendRes.status})`);
+    }
+
+    console.log("sendOrderConfirmation: email sent via Gmail", { orderId, email });
     return Response.json({ ok: true, sentTo: email });
   } catch (error) {
     console.error("sendOrderConfirmation error", error);
