@@ -1,5 +1,5 @@
 {
-  "name": "Untitled",
+  "name": "PENHAUS AI Creative Command Center",
   "site": {
     "installCommand": "npm install",
     "buildCommand": "npm run build",
