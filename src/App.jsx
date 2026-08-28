@@ -30,6 +30,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/store" element={<Store />} />
             <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
@@ -39,7 +40,6 @@ function App() {
                 <Route path="/creatives" element={<Creatives />} />
                 <Route path="/studio" element={<Studio />} />
               </Route>
-              <Route path="/store" element={<Store />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
           </Routes>
