@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sparkles, Plus, X } from "lucide-react";
 import FormSelect from "@/components/FormSelect";
+import CreativeGallery from "@/components/CreativeGallery";
 
 const platforms = ["TikTok", "YouTube", "Instagram", "Meta Ads", "Universal"];
 const statuses = ["Testing", "Winner", "Scaling", "Killed"];
@@ -69,28 +70,7 @@ export default function Creatives() {
         <Stat label="Active Winners" value={winners.length} />
       </div>
 
-      <div className="space-y-3">
-        {creatives.map((c) => (
-          <div key={c.id} className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 flex flex-col md:flex-row md:items-center gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">{c.platform}</span>
-                <button onClick={() => cycle(c)} className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded transition-colors">
-                  <StatusBadge status={c.status} />
-                </button>
-              </div>
-              <h3 className="font-semibold tracking-tight">{c.title}</h3>
-              <p className="text-sm text-emerald-300/90 mt-1 line-clamp-1">"{c.hook}"</p>
-              <p className="text-xs text-zinc-500 mt-1 line-clamp-1">{c.angle}</p>
-            </div>
-            <div className="flex items-center gap-6 md:gap-8 shrink-0">
-              <Metric label="Spend" value={`$${(c.spend || 0).toLocaleString()}`} />
-              <Metric label="Revenue" value={`$${(c.revenue || 0).toLocaleString()}`} accent="text-emerald-400" />
-              <Metric label="ROAS" value={`${(c.roas || 0).toFixed(1)}x`} accent={c.roas >= 2 ? "text-emerald-400" : "text-zinc-300"} />
-            </div>
-          </div>
-        ))}
-      </div>
+      <CreativeGallery creatives={creatives} onCycle={cycle} />
 
       {showForm && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4" onClick={() => setShowForm(false)}>
