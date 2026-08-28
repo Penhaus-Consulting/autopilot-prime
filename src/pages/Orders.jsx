@@ -5,7 +5,7 @@ import { Receipt, Search, Filter, X, Star, CheckCircle2, Loader2 } from "lucide-
 import FormSelect from "@/components/FormSelect";
 import { useToast } from "@/components/ui/use-toast";
 
-const statuses = ["paid", "fulfilled", "refunded"];
+const statuses = ["paid", "fulfilled"];
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(n || 0);
@@ -99,7 +99,7 @@ export default function Orders() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <Stat label="Total Orders" value={filtered.length} />
         <Stat label="Filtered Revenue" value={fmt(totalRevenue)} />
-        <Stat label="Refunded" value={filtered.filter((o) => o.status === "refunded").length} />
+        <Stat label="Fulfilled" value={filtered.filter((o) => o.status === "fulfilled").length} />
       </div>
 
       {/* Filter bar */}
@@ -143,7 +143,6 @@ export default function Orders() {
             { value: "all", label: "All" },
             { value: "paid", label: "Pending" },
             { value: "fulfilled", label: "Completed" },
-            { value: "refunded", label: "Refunded" },
           ].map((opt) => (
             <button
               key={opt.value}
