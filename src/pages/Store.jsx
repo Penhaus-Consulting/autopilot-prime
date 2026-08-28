@@ -27,7 +27,7 @@ export default function Store() {
         status: "pending_payment",
       });
       await base44.entities.AutopilotTask.create({
-        title: `Fulfill order: ${selected.name} for ${form.customer_name}`,
+        title: `Review request and send secure checkout: ${selected.name} for ${form.customer_name}`,
         agent: "",
         category: "Fulfillment",
         status: "pending",
