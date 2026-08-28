@@ -190,6 +190,52 @@ async function handleOrderApproved(db: any, eventData: any): Promise<Response> {
       result: `Auto-queued from paid purchase. Buyer: ${buyerEmail || "unknown"}.`,
     });
 
+    // Notify the team in Slack the instant a sale lands — real-time revenue signal.
+    // Best-effort + idempotent (only runs inside the first-delivery guard above).
+    // Posts to a dedicated public channel; create it in Slack (bot posts to public
+    // channels without an invite thanks to chat:write.public).
+    try {
+      const SLACK_CHANNEL = "#orders";
+      const { accessToken: slackToken } = await db.connectors.getConnection("slackbot");
+      const slackRes = await fetch("https://slack.com/api/chat.postMessage", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${slackToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          channel: SLACK_CHANNEL,
+          username: "PENHAUS",
+          icon_emoji: ":money_with_wings:",
+          text: `New sale — $${Number(purchase.amount) || 0} · ${purchase.productName || "Service"}`,
+          blocks: [
+            {
+              type: "header",
+              text: { type: "plain_text", text: `New Sale · $${Number(purchase.amount) || 0}` },
+            },
+            {
+              type: "section",
+              fields: [
+                { type: "mrkdwn", text: `*Service:*\n${purchase.productName || "Service"}` },
+                { type: "mrkdwn", text: `*Buyer:*\n${buyerEmail || "—"}` },
+              ],
+            },
+            {
+              type: "context",
+              elements: [
+                { type: "mrkdwn", text: ":white_check_mark: Autopilot fulfillment task queued · :calendar: Calendar deadline created" },
+              ],
+            },
+          ],
+        }),
+      });
+      if (!slackRes.ok) {
+        console.error("payments-webhook: slack post failed", { status: slackRes.status, body: await slackRes.text() });
+      }
+    } catch (slackErr) {
+      console.error("payments-webhook: slack integration error", slackErr);
+    }
+
     // Create a Google Calendar delivery-deadline event on the builder's calendar.
     // Best-effort: a calendar failure must NOT block order fulfillment, so log and continue.
     // Idempotent via the surrounding purchase.id guard — only runs on the first delivery.
