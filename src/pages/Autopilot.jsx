@@ -37,8 +37,15 @@ export default function Autopilot() {
     const next = t.status === "pending" ? "running" : t.status === "running" ? "done" : "pending";
     const patch = { status: next };
     if (next === "done") patch.result = "Completed by agent";
-    await base44.entities.AutopilotTask.update(t.id, patch);
-    qc.invalidateQueries(["autopilot-tasks"]);
+    const prev = qc.getQueryData(["autopilot-tasks"]);
+    qc.setQueryData(["autopilot-tasks"], (old) => (old ? old.map((x) => (x.id === t.id ? { ...x, ...patch } : x)) : old));
+    try {
+      await base44.entities.AutopilotTask.update(t.id, patch);
+    } catch (err) {
+      qc.setQueryData(["autopilot-tasks"], prev);
+    } finally {
+      qc.invalidateQueries(["autopilot-tasks"]);
+    }
   };
 
   const remove = async (t) => {

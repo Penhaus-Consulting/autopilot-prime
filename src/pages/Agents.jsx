@@ -33,8 +33,16 @@ export default function Agents() {
   };
 
   const toggle = async (a) => {
-    await base44.entities.Agent.update(a.id, { status: a.status === "active" ? "paused" : "active" });
-    qc.invalidateQueries(["agents"]);
+    const newStatus = a.status === "active" ? "paused" : "active";
+    const prev = qc.getQueryData(["agents"]);
+    qc.setQueryData(["agents"], (old) => (old ? old.map((x) => (x.id === a.id ? { ...x, status: newStatus } : x)) : old));
+    try {
+      await base44.entities.Agent.update(a.id, { status: newStatus });
+    } catch (err) {
+      qc.setQueryData(["agents"], prev);
+    } finally {
+      qc.invalidateQueries(["agents"]);
+    }
   };
 
   return (
