@@ -138,6 +138,26 @@ export default function Orders() {
             />
           </div>
         </div>
+        <div className="flex items-center gap-2 flex-wrap mt-3">
+          {[
+            { value: "all", label: "All" },
+            { value: "paid", label: "Pending" },
+            { value: "fulfilled", label: "Completed" },
+            { value: "refunded", label: "Refunded" },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setStatus(opt.value)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                status === opt.value
+                  ? "bg-emerald-400 text-zinc-950"
+                  : "bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-zinc-100"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
         <div className="flex items-center justify-between gap-3 mt-3">
           <div className="w-40">
             <FormSelect
