@@ -14,6 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import DailyEarningsChart from "@/components/DailyEarningsChart";
+import OrdersVolumeChart from "@/components/OrdersVolumeChart";
 import AgentPerformanceRanking from "@/components/AgentPerformanceRanking";
 import UpcomingAppointments from "@/components/UpcomingAppointments";
 
@@ -85,6 +86,9 @@ export default function Home() {
 
       {/* Daily earnings summary dashboard */}
       <DailyEarningsChart orders={orders} />
+
+      {/* Orders received over last 30 days */}
+      <OrdersVolumeChart orders={orders} />
 
       {/* Agent performance ranking by revenue impact */}
       <AgentPerformanceRanking agents={agents} tasks={tasks} />
