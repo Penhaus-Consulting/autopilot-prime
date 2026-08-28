@@ -189,6 +189,41 @@ async function handleOrderApproved(db: any, eventData: any): Promise<Response> {
       scheduled_time: new Date().toISOString(),
       result: `Auto-queued from paid purchase. Buyer: ${buyerEmail || "unknown"}.`,
     });
+
+    // Create a Google Calendar delivery-deadline event on the builder's calendar.
+    // Best-effort: a calendar failure must NOT block order fulfillment, so log and continue.
+    // Idempotent via the surrounding purchase.id guard — only runs on the first delivery.
+    try {
+      const svc = (await db.entities.Service.filter({ id: purchase.productId }))?.[0];
+      const deliveryDays = Number(svc?.delivery_days) || 3;
+      const due = new Date();
+      due.setDate(due.getDate() + deliveryDays);
+      const dueDate = due.toISOString().slice(0, 10);
+      const end = new Date(due);
+      end.setDate(end.getDate() + 1);
+      const { accessToken } = await db.connectors.getConnection("googlecalendar");
+      const calRes = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          summary: `Delivery due: ${purchase.productName || "Service"}`,
+          description: `New order for ${buyerEmail || "customer"} — $${Number(purchase.amount) || 0}.`,
+          start: { date: dueDate },
+          end: { date: end.toISOString().slice(0, 10) },
+        }),
+      });
+      if (!calRes.ok) {
+        console.error("payments-webhook: calendar event creation failed", {
+          status: calRes.status,
+          body: await calRes.text(),
+        });
+      }
+    } catch (calErr) {
+      console.error("payments-webhook: calendar integration error", calErr);
+    }
   }
   // ===== END APP-SPECIFIC =====
 
