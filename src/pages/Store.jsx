@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Zap, Star, Loader2, ArrowLeft } from "lucide-react";
+import WallOfLove from "@/components/WallOfLove";
 
 export default function Store() {
   const { data: services = [] } = useQuery({
@@ -45,6 +46,8 @@ export default function Store() {
           </p>
         </div>
       </div>
+
+      <WallOfLove />
 
       <div className="max-w-6xl mx-auto px-6 py-12">
         {selected ? (
