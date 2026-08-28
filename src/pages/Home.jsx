@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import DailyEarningsChart from "@/components/DailyEarningsChart";
 import AgentPerformanceRanking from "@/components/AgentPerformanceRanking";
+import UpcomingAppointments from "@/components/UpcomingAppointments";
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n || 0);
@@ -87,6 +88,9 @@ export default function Home() {
 
       {/* Agent performance ranking by revenue impact */}
       <AgentPerformanceRanking agents={agents} tasks={tasks} />
+
+      {/* Upcoming Calendly appointments */}
+      <UpcomingAppointments />
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Today's Autopilot */}
