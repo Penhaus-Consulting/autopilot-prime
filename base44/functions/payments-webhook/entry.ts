@@ -166,6 +166,30 @@ async function handleOrderApproved(db: any, eventData: any): Promise<Response> {
   //   - Gate paid access on a WRITABLE field you set here (e.g. plan / has_paid on the user or an
   //     Entitlement row) — NEVER on is_verified: it is platform-protected and cannot be set here,
   //     even as service role, so gating access on it locks the paying buyer out.
+  //
+  //   PENHAUS grant: create a paid Order + queue an AutopilotTask for agent fulfillment.
+  //   Idempotent — keyed on purchase.id so duplicate deliveries don't double-create.
+  const existingOrders = await db.entities.Order.filter({ note: `purchase:${purchase.id}` });
+  if (!existingOrders.length) {
+    await db.entities.Order.create({
+      customer_name: buyerEmail || "Customer",
+      customer_email: buyerEmail || "",
+      service_name: purchase.productName || "Service",
+      amount: Number(purchase.amount) || 0,
+      status: "paid",
+      note: `purchase:${purchase.id}`,
+    });
+    await db.entities.AutopilotTask.create({
+      title: `Fulfill order: ${purchase.productName || "Service"}`,
+      agent: "Forge",
+      category: "Fulfillment",
+      status: "pending",
+      priority: "high",
+      revenue_impact: Number(purchase.amount) || 0,
+      scheduled_time: new Date().toISOString(),
+      result: `Auto-queued from paid purchase. Buyer: ${buyerEmail || "unknown"}.`,
+    });
+  }
   // ===== END APP-SPECIFIC =====
 
   // Mark paid LAST, so "paid" always implies the grant above completed. The idempotency

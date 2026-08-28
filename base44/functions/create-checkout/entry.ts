@@ -74,28 +74,25 @@ Deno.serve(async (req: Request) => {
     // product identifier; look up the authoritative price here (a Product entity, a config map,
     // etc.). For a subscription, set `subscriptionInfo` (frequency/interval/billingCycles).
     const productId = String(body.productId ?? "");
-    // Quantity is buyer-controlled, so VALIDATE it server-side. Check the RAW value is a positive
-    // integer BEFORE using it — do NOT Math.trunc first, or a fractional POST (e.g. 1.9) silently
-    // passes as 1 and charges a quantity the UI never allowed. For a plan / fixed-entitlement product,
-    // hard-code `1` and ignore the body; for a genuine multi-unit product, also enforce YOUR own max.
-    const quantity = Number(body.quantity ?? 1);
-    if (!Number.isInteger(quantity) || quantity < 1) {
-      return new Response(JSON.stringify({ error: "Invalid quantity" }), { status: 400 });
+    if (!productId) {
+      return new Response(JSON.stringify({ error: "Product ID is required" }), { status: 400 });
     }
-    // Example — replace with your real trusted product source:
-    //   const product = (await base44.asServiceRole.entities.Product.filter({ id: productId }))[0];
-    //   if (!product) return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
-    //   const productName = product.name; const price = String(product.price); const currency = product.currency ?? "USD";
-    const productName = "Purchase"; // TODO: from your trusted product source
-    const price = "0.00";           // TODO: authoritative per-unit price (major units), resolved server-side
+    // Fixed-entitlement digital services — one unit per checkout, ignore client quantity.
+    const quantity = 1;
+    // Resolve the product AND its price SERVER-SIDE from the Service entity. Never trust a client price.
+    const products = await base44.asServiceRole.entities.Service.filter({ id: productId });
+    const product = products?.[0];
+    if (!product || product.status === "retired") {
+      return new Response(JSON.stringify({ error: "Unknown or unavailable service" }), { status: 400 });
+    }
+    const productName = product.name;
+    const price = String(product.price);
     const currency = "USD";
-    // For a SUBSCRIPTION set this to Wix's subscriptionInfo; leave null for a one-time payment.
+    // One-time payments only (no subscriptions on this storefront yet).
     const subscriptionInfo = null;
-    // Where Wix returns the buyer. Both MUST be real, PUBLICLY reachable routes in this app: the
-    // returning buyer is often anonymous, so a missing or login-gated route strands a paid customer.
-    // Match your router exactly — `/ThankYou`, not `/thank-you`.
+    // Publicly reachable return routes (buyers are often anonymous).
     const thankYouPath = "/ThankYou";
-    const postFlowPath = "/";
+    const postFlowPath = "/store";
     // ===== END APP-SPECIFIC =====
 
     const total = parseFloat(price) * quantity;

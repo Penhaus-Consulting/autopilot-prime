@@ -1,46 +1,26 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Zap, Star, Check, Loader2, ArrowLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Zap, Star, Loader2, ArrowLeft } from "lucide-react";
 
 export default function Store() {
-  const qc = useQueryClient();
   const { data: services = [] } = useQuery({
     queryKey: ["services"],
     queryFn: () => base44.entities.Service.filter({ status: "live" }, "-created_date", 100),
   });
 
   const [selected, setSelected] = useState(null);
-  const [form, setForm] = useState({ customer_name: "", customer_email: "" });
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
 
-  const buy = async (e) => {
-    e.preventDefault();
+  const buy = async () => {
     setSubmitting(true);
     try {
-      await base44.entities.Order.create({
-        customer_name: form.customer_name,
-        customer_email: form.customer_email,
-        service_name: selected.name,
-        amount: selected.price,
-        status: "pending_payment",
-      });
-      await base44.entities.AutopilotTask.create({
-        title: `Review request and send secure checkout: ${selected.name} for ${form.customer_name}`,
-        agent: "",
-        category: "Fulfillment",
-        status: "pending",
-        priority: "high",
-        revenue_impact: 0,
-        scheduled_time: new Date().toISOString(),
-      });
-      qc.invalidateQueries(["orders"]);
-      qc.invalidateQueries(["autopilot-tasks"]);
-      setDone(true);
+      const res = await base44.functions.invoke("create-checkout", { productId: selected.id });
+      const redirectUrl = res?.data?.redirectUrl;
+      if (!redirectUrl) throw new Error("No checkout URL returned");
+      window.location.href = redirectUrl;
     } catch (err) {
       console.error(err);
-    } finally {
       setSubmitting(false);
     }
   };
@@ -67,18 +47,7 @@ export default function Store() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-12">
-        {done ? (
-          <div className="max-w-md mx-auto text-center py-16">
-            <div className="w-16 h-16 rounded-full bg-emerald-400/10 grid place-items-center mx-auto mb-5">
-              <Check className="w-8 h-8 text-emerald-400" />
-            </div>
-            <h2 className="text-2xl font-semibold mb-2">Order received</h2>
-            <p className="text-zinc-400 mb-6">We received your request. You will receive scope and secure payment instructions before work begins.</p>
-            <button onClick={() => { setDone(false); setSelected(null); }} className="px-5 py-2.5 rounded-lg bg-emerald-400 text-zinc-950 font-medium text-sm hover:bg-emerald-300">
-              Back to services
-            </button>
-          </div>
-        ) : selected ? (
+        {selected ? (
           <div className="max-w-lg mx-auto">
             <button onClick={() => setSelected(null)} className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 mb-5">
               <ArrowLeft className="w-4 h-4" /> Back
@@ -92,13 +61,14 @@ export default function Store() {
               {selected.deliverables && (
                 <div className="mt-4 pt-4 border-t border-zinc-800 text-sm text-zinc-400 whitespace-pre-wrap">{selected.deliverables}</div>
               )}
-              <form onSubmit={buy} className="mt-6 space-y-3">
-                <input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} required placeholder="Your name" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none" />
-                <input type="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} required placeholder="Email for delivery" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none" />
-                <button type="submit" disabled={submitting} className="w-full py-3 rounded-lg bg-emerald-400 text-zinc-950 font-medium text-sm hover:bg-emerald-300 disabled:opacity-50 flex items-center justify-center gap-2">
-                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : `Request Service · $${selected.price}` }
-                </button>
-              </form>
+              <p className="text-xs text-zinc-500 mt-6">Secure checkout via Base44 Payments. Enter your details on the next page.</p>
+              <button
+                onClick={buy}
+                disabled={submitting}
+                className="w-full mt-3 py-3 rounded-lg bg-emerald-400 text-zinc-950 font-medium text-sm hover:bg-emerald-300 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Starting checkout…</> : `Buy Now · $${selected.price}`}
+              </button>
             </div>
           </div>
         ) : (

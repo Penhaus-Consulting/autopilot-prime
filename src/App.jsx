@@ -18,6 +18,7 @@ import Services from '@/pages/Services';
 import Creatives from '@/pages/Creatives';
 import Studio from '@/pages/Studio';
 import Store from '@/pages/Store';
+import ThankYou from '@/pages/ThankYou';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/ThankYou" element={<ThankYou />} />
             <Route path="/store" element={<Store />} />
             <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
               <Route element={<Layout />}>
