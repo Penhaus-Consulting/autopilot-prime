@@ -47,7 +47,7 @@ export default function Layout() {
           <span className="w-7 h-7 rounded-md bg-emerald-400 grid place-items-center text-zinc-950">
             <Zap className="w-4 h-4" strokeWidth={2.5} />
           </span>
-          <span className="text-sm">AUTONOMOUS OS</span>
+          <span className="text-sm">PENHAUS AI</span>
         </Link>
         <button onClick={() => setOpen(!open)} className="p-2 -mr-2 text-zinc-400">
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -66,8 +66,8 @@ export default function Layout() {
               <Zap className="w-4 h-4" strokeWidth={2.5} />
             </span>
             <div className="leading-tight">
-              <div className="text-sm font-semibold tracking-tight">AUTONOMOUS OS</div>
-              <div className="text-[10px] uppercase tracking-widest text-emerald-400/80">24/7 Money Machine</div>
+              <div className="text-sm font-semibold tracking-tight">PENHAUS AI</div>
+              <div className="text-[10px] uppercase tracking-widest text-emerald-400/80">Creative Intelligence</div>
             </div>
           </div>
 
