@@ -13,6 +13,7 @@ import {
   Loader2,
   AlertTriangle,
 } from "lucide-react";
+import DailyEarningsChart from "@/components/DailyEarningsChart";
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n || 0);
@@ -79,6 +80,9 @@ export default function Home() {
           );
         })}
       </div>
+
+      {/* Daily earnings summary dashboard */}
+      <DailyEarningsChart orders={orders} />
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Today's Autopilot */}
