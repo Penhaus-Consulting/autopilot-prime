@@ -40,6 +40,11 @@
         "published"
       ],
       "default": "draft"
+    },
+    "release_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Scheduled release date for this content piece."
     }
   },
   "required": [
