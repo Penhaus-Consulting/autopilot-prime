@@ -53,11 +53,11 @@ export default function Home() {
       <header className="mb-8">
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-emerald-400/80 mb-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          System Online · Founder-Controlled
+          System Online · Earning Autonomously
         </div>
         <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight">Command Center</h1>
         <p className="text-zinc-400 mt-1 text-sm">
-          Build demand, approve actions, and track verified revenue from one clear workspace.
+          Your 24/7 money machine. Agents are running. Revenue is compounding.
         </p>
       </header>
 
@@ -86,7 +86,7 @@ export default function Home() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
             <div>
               <h2 className="font-semibold">Today's Autopilot Tasks</h2>
-              <p className="text-xs text-zinc-500">Prepared by agents; consequential actions require founder approval</p>
+              <p className="text-xs text-zinc-500">Agents executing on your behalf</p>
             </div>
             <Link to="/autopilot" className="text-xs text-emerald-400 hover:underline flex items-center gap-1">
               View all <ArrowUpRight className="w-3 h-3" />
@@ -161,7 +161,7 @@ export default function Home() {
         </div>
         <div className="divide-y divide-zinc-800">
           {orders.length === 0 && (
-            <div className="px-5 py-10 text-center text-sm text-zinc-500">No verified orders yet. Connect checkout and publish an offer to begin selling.</div>
+            <div className="px-5 py-10 text-center text-sm text-zinc-500">No orders yet. The storefront is live and waiting.</div>
           )}
           {orders.slice(0, 5).map((o) => (
             <div key={o.id} className="px-5 py-3.5 flex items-center justify-between">
