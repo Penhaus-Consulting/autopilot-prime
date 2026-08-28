@@ -20,6 +20,7 @@ import Orders from '@/pages/Orders';
 import Studio from '@/pages/Studio';
 import SettingsPage from '@/pages/Settings';
 import Store from '@/pages/Store';
+import Pricing from '@/pages/Pricing';
 import ThankYou from '@/pages/ThankYou';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/ThankYou" element={<ThankYou />} />
             <Route path="/store" element={<Store />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
