@@ -23,6 +23,7 @@ import SettingsPage from '@/pages/Settings';
 import Store from '@/pages/Store';
 import Pricing from '@/pages/Pricing';
 import ThankYou from '@/pages/ThankYou';
+import Rate from '@/pages/Rate';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/ThankYou" element={<ThankYou />} />
+            <Route path="/rate" element={<Rate />} />
             <Route path="/store" element={<Store />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>

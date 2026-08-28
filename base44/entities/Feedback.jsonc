@@ -1,0 +1,30 @@
+{
+  "name": "Feedback",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "description": "The Order this rating belongs to."
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "service_name": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number",
+      "description": "1-5 star rating."
+    },
+    "comment": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "order_id",
+    "rating"
+  ]
+}
