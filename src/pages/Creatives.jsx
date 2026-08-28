@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sparkles, Plus, X } from "lucide-react";
 import FormSelect from "@/components/FormSelect";
 import CreativeGallery from "@/components/CreativeGallery";
+import CreativePerformanceChart from "@/components/CreativePerformanceChart";
 
 const platforms = ["TikTok", "YouTube", "Instagram", "Meta Ads", "Universal"];
 const statuses = ["Testing", "Winner", "Scaling", "Killed"];
@@ -69,6 +70,8 @@ export default function Creatives() {
         <Stat label="Total Ad Spend" value={`$${totalSpend.toLocaleString()}`} />
         <Stat label="Active Winners" value={winners.length} />
       </div>
+
+      <CreativePerformanceChart creatives={creatives} />
 
       <CreativeGallery creatives={creatives} onCycle={cycle} />
 
