@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Sparkles, Plus, X, TrendingUp, Flame } from "lucide-react";
+import { Sparkles, Plus, X } from "lucide-react";
 
 const platforms = ["TikTok", "YouTube", "Instagram", "Meta Ads", "Universal"];
 const statuses = ["Testing", "Winner", "Scaling", "Killed"];
