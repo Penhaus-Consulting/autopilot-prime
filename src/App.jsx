@@ -18,6 +18,7 @@ import Services from '@/pages/Services';
 import Creatives from '@/pages/Creatives';
 import Orders from '@/pages/Orders';
 import Studio from '@/pages/Studio';
+import Templates from '@/pages/Templates';
 import SettingsPage from '@/pages/Settings';
 import Store from '@/pages/Store';
 import Pricing from '@/pages/Pricing';
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/creatives" element={<Creatives />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/studio" element={<Studio />} />
+                <Route path="/templates" element={<Templates />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Route>

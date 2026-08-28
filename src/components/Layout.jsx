@@ -18,12 +18,14 @@ import {
   LogOut,
   ArrowLeft,
   Loader2,
+  Layers,
 } from "lucide-react";
 
 const nav = [
   { to: "/", label: "Command Center", icon: LayoutDashboard },
   { to: "/agents", label: "AI Agents", icon: Bot },
   { to: "/autopilot", label: "Autopilot Tasks", icon: Zap },
+  { to: "/templates", label: "Task Templates", icon: Layers },
   { to: "/services", label: "Services & Pricing", icon: Tag },
   { to: "/orders", label: "Orders", icon: Receipt },
   { to: "/creatives", label: "Winning Creatives", icon: Sparkles },

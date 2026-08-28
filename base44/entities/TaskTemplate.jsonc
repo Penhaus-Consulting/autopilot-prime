@@ -1,16 +1,18 @@
 {
-  "name": "AutopilotTask",
+  "name": "TaskTemplate",
   "type": "object",
   "properties": {
-    "title": {
-      "type": "string"
+    "name": {
+      "type": "string",
+      "description": "Template label, also used as the default task title when launched."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short summary of what this recurring workflow does."
     },
     "instructions": {
       "type": "string",
-      "description": "Pre-filled agent instructions for this task (e.g. from a template)."
-    },
-    "agent": {
-      "type": "string"
+      "description": "Pre-filled agent instructions / prompt applied to every launched task."
     },
     "category": {
       "type": "string",
@@ -21,17 +23,8 @@
         "Fulfillment",
         "Growth",
         "Ops"
-      ]
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "pending",
-        "running",
-        "done",
-        "failed"
       ],
-      "default": "pending"
+      "default": "Ops"
     },
     "priority": {
       "type": "string",
@@ -42,12 +35,9 @@
       ],
       "default": "medium"
     },
-    "scheduled_time": {
+    "agent": {
       "type": "string",
-      "format": "date-time"
-    },
-    "result": {
-      "type": "string"
+      "description": "Default agent name to assign on launch."
     },
     "revenue_impact": {
       "type": "number",
@@ -55,7 +45,6 @@
     }
   },
   "required": [
-    "title",
-    "category"
+    "name"
   ]
 }

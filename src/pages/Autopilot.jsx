@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Zap, Plus, X } from "lucide-react";
 import FormSelect from "@/components/FormSelect";
 import TaskKanban from "@/components/TaskKanban";
+import TemplateLauncher from "@/components/TemplateLauncher";
 
 const categories = ["Sales", "Content", "Creative", "Fulfillment", "Growth", "Ops"];
 
@@ -19,7 +20,19 @@ export default function Autopilot() {
   });
 
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", agent: "", category: "Sales", priority: "medium", revenue_impact: 0 });
+  const [form, setForm] = useState({ title: "", agent: "", category: "Sales", priority: "medium", revenue_impact: 0, instructions: "" });
+
+  const customizeFromTemplate = (tpl) => {
+    setForm({
+      title: tpl.name || "",
+      agent: tpl.agent || "",
+      category: tpl.category || "Ops",
+      priority: tpl.priority || "medium",
+      revenue_impact: tpl.revenue_impact || 0,
+      instructions: tpl.instructions || "",
+    });
+    setShowForm(true);
+  };
 
   const create = async (e) => {
     e.preventDefault();
@@ -31,7 +44,7 @@ export default function Autopilot() {
     });
     qc.invalidateQueries(["autopilot-tasks"]);
     setShowForm(false);
-    setForm({ title: "", agent: "", category: "Sales", priority: "medium", revenue_impact: 0 });
+    setForm({ title: "", agent: "", category: "Sales", priority: "medium", revenue_impact: 0, instructions: "" });
   };
 
   const advance = async (t) => {
@@ -88,6 +101,8 @@ export default function Autopilot() {
         </button>
       </header>
 
+      <TemplateLauncher onCustomize={customizeFromTemplate} />
+
       <TaskKanban tasks={tasks} onMove={move} onAdvance={advance} onRemove={remove} />
 
       {showForm && (
@@ -112,6 +127,16 @@ export default function Autopilot() {
                   required
                   placeholder="e.g. Generate 5 TikTok hooks for offer X"
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-zinc-500 mb-1.5 block">Agent Instructions</label>
+                <textarea
+                  value={form.instructions}
+                  onChange={(e) => setForm({ ...form, instructions: e.target.value })}
+                  rows={3}
+                  placeholder="Pre-filled instructions / prompt for the agent…"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none resize-none"
                 />
               </div>
               <div>
