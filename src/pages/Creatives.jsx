@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sparkles, Plus, X } from "lucide-react";
+import FormSelect from "@/components/FormSelect";
 
 const platforms = ["TikTok", "YouTube", "Instagram", "Meta Ads", "Universal"];
 const statuses = ["Testing", "Winner", "Scaling", "Killed"];
@@ -105,15 +106,11 @@ export default function Creatives() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-zinc-500 mb-1.5 block">Platform</label>
-                  <select value={form.platform} onChange={(e) => setForm({ ...form, platform: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm">
-                    {platforms.map((p) => <option key={p} value={p}>{p}</option>)}
-                  </select>
+                  <FormSelect value={form.platform} onValueChange={(v) => setForm({ ...form, platform: v })} options={platforms.map((p) => ({ value: p, label: p }))} />
                 </div>
                 <div>
                   <label className="text-xs text-zinc-500 mb-1.5 block">Status</label>
-                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm">
-                    {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <FormSelect value={form.status} onValueChange={(v) => setForm({ ...form, status: v })} options={statuses.map((s) => ({ value: s, label: s }))} />
                 </div>
               </div>
               <In label="Hook" value={form.hook} onChange={(v) => setForm({ ...form, hook: v })} />

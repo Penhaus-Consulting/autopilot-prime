@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bot, Plus, X, Play, Pause, Sparkles } from "lucide-react";
+import FormSelect from "@/components/FormSelect";
 
 const accents = ["emerald", "sky", "amber", "fuchsia", "violet", "rose"];
 
@@ -115,27 +116,11 @@ export default function Agents() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-zinc-500 mb-1.5 block">Accent</label>
-                  <select
-                    value={form.accent}
-                    onChange={(e) => setForm({ ...form, accent: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm"
-                  >
-                    {accents.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  <FormSelect value={form.accent} onValueChange={(v) => setForm({ ...form, accent: v })} options={accents.map((c) => ({ value: c, label: c }))} />
                 </div>
                 <div>
                   <label className="text-xs text-zinc-500 mb-1.5 block">Autonomy</label>
-                  <select
-                    value={form.autonomy}
-                    onChange={(e) => setForm({ ...form, autonomy: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm"
-                  >
-                    <option value="manual">Manual</option>
-                    <option value="supervised">Supervised</option>
-                    <option value="full">Full Autonomy</option>
-                  </select>
+                  <FormSelect value={form.autonomy} onValueChange={(v) => setForm({ ...form, autonomy: v })} options={[{ value: "manual", label: "Manual" }, { value: "supervised", label: "Supervised" }, { value: "full", label: "Full Autonomy" }]} />
                 </div>
               </div>
             </div>

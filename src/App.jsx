@@ -17,6 +17,7 @@ import Autopilot from '@/pages/Autopilot';
 import Services from '@/pages/Services';
 import Creatives from '@/pages/Creatives';
 import Studio from '@/pages/Studio';
+import SettingsPage from '@/pages/Settings';
 import Store from '@/pages/Store';
 import ThankYou from '@/pages/ThankYou';
 
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/services" element={<Services />} />
                 <Route path="/creatives" element={<Creatives />} />
                 <Route path="/studio" element={<Studio />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Route>
             <Route path="*" element={<PageNotFound />} />

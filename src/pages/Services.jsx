@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tag, Plus, X, Star, Trash2 } from "lucide-react";
+import FormSelect from "@/components/FormSelect";
 
 const categories = ["Content", "Creative", "Funnel", "Growth", "Automation", "Branding"];
 
@@ -104,9 +105,7 @@ export default function Services() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="text-xs text-zinc-500 mb-1.5 block">Category</label>
-                  <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm">
-                    {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <FormSelect value={form.category} onValueChange={(v) => setForm({ ...form, category: v })} options={categories.map((c) => ({ value: c, label: c }))} />
                 </div>
                 <div>
                   <label className="text-xs text-zinc-500 mb-1.5 block">Price ($)</label>
