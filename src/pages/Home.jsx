@@ -14,6 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import DailyEarningsChart from "@/components/DailyEarningsChart";
+import AgentPerformanceRanking from "@/components/AgentPerformanceRanking";
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n || 0);
@@ -83,6 +84,9 @@ export default function Home() {
 
       {/* Daily earnings summary dashboard */}
       <DailyEarningsChart orders={orders} />
+
+      {/* Agent performance ranking by revenue impact */}
+      <AgentPerformanceRanking agents={agents} tasks={tasks} />
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Today's Autopilot */}
