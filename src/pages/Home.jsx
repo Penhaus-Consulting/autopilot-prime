@@ -35,7 +35,7 @@ export default function Home() {
     queryFn: () => base44.entities.Creative.list("-created_date", 50),
   });
 
-  const revenue = orders.reduce((s, o) => s + (o.amount || 0), 0);
+  const revenue = orders.filter((o) => ["paid", "fulfilled"].includes(o.status)).reduce((s, o) => s + (o.amount || 0), 0);
   const winners = creatives.filter((c) => c.status === "Winner").length;
   const activeAgents = agents.filter((a) => a.status === "active").length;
   const todayTasks = tasks.filter((t) => t.status !== "done");
