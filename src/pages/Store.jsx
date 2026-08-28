@@ -24,7 +24,7 @@ export default function Store() {
         customer_email: form.customer_email,
         service_name: selected.name,
         amount: selected.price,
-        status: "paid",
+        status: "pending_payment",
       });
       await base44.entities.AutopilotTask.create({
         title: `Fulfill order: ${selected.name} for ${form.customer_name}`,
@@ -32,7 +32,7 @@ export default function Store() {
         category: "Fulfillment",
         status: "pending",
         priority: "high",
-        revenue_impact: selected.price,
+        revenue_impact: 0,
         scheduled_time: new Date().toISOString(),
       });
       qc.invalidateQueries(["orders"]);
@@ -54,14 +54,14 @@ export default function Store() {
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent" />
         <div className="relative max-w-5xl mx-auto px-6 py-16 lg:py-24 text-center">
           <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-emerald-400 mb-4">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> AI-Powered Services · Delivered Autonomously
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> AI-Assisted Services · Founder-Reviewed
           </div>
           <h1 className="text-4xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
             Buy the output.<br />
-            <span className="text-emerald-400">Our agents do the work.</span>
+            <span className="text-emerald-400">PENHAUS builds the system.</span>
           </h1>
           <p className="text-zinc-400 mt-5 max-w-xl mx-auto text-base lg:text-lg">
-            Pick a service. Pay once. Our AI agents deliver — fast, on-brand, and while you sleep.
+            Choose a service and send your request. We confirm scope and payment before work begins.
           </p>
         </div>
       </div>
@@ -73,7 +73,7 @@ export default function Store() {
               <Check className="w-8 h-8 text-emerald-400" />
             </div>
             <h2 className="text-2xl font-semibold mb-2">Order received</h2>
-            <p className="text-zinc-400 mb-6">Our agents are already on it. You'll get your delivery shortly.</p>
+            <p className="text-zinc-400 mb-6">We received your request. You will receive scope and secure payment instructions before work begins.</p>
             <button onClick={() => { setDone(false); setSelected(null); }} className="px-5 py-2.5 rounded-lg bg-emerald-400 text-zinc-950 font-medium text-sm hover:bg-emerald-300">
               Back to services
             </button>
@@ -96,7 +96,7 @@ export default function Store() {
                 <input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} required placeholder="Your name" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none" />
                 <input type="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} required placeholder="Email for delivery" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-400/50 outline-none" />
                 <button type="submit" disabled={submitting} className="w-full py-3 rounded-lg bg-emerald-400 text-zinc-950 font-medium text-sm hover:bg-emerald-300 disabled:opacity-50 flex items-center justify-center gap-2">
-                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</> : `Pay $${selected.price} & Order`}
+                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : `Request Service · $${selected.price}` }
                 </button>
               </form>
             </div>
@@ -132,7 +132,7 @@ export default function Store() {
       </div>
 
       <footer className="border-t border-zinc-800 py-8 text-center text-xs text-zinc-600">
-        Powered by Autonomous OS · AI agents working 24/7
+        PENHAUS Digital · Original systems · Founder-controlled AI
       </footer>
     </div>
   );
