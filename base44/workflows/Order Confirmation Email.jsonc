@@ -1,0 +1,40 @@
+{
+  "name": "Order Confirmation Email",
+  "description": "Sends the customer an immediate confirmation email whenever a new order is placed",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Order",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ (.trigger.data.customer_email // \"\") != \"\" }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "order_confirmation_email",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_confirmation": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendOrderConfirmation",
+            "args": {
+              "order_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send confirmation email",
+            "description": "Email the buyer immediately"
+          }
+        }
+      }
+    ]
+  }
+}
