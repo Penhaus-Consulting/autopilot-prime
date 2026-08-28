@@ -1,0 +1,49 @@
+{
+  "name": "ContentRequest",
+  "type": "object",
+  "properties": {
+    "platform": {
+      "type": "string",
+      "enum": [
+        "TikTok",
+        "YouTube",
+        "Instagram"
+      ]
+    },
+    "topic": {
+      "type": "string"
+    },
+    "angle": {
+      "type": "string"
+    },
+    "hook": {
+      "type": "string"
+    },
+    "script": {
+      "type": "string"
+    },
+    "hashtags": {
+      "type": "string"
+    },
+    "cta": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "number",
+      "default": 30
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "generated",
+        "published"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "platform",
+    "topic"
+  ]
+}

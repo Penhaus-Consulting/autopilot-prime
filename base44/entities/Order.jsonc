@@ -1,0 +1,35 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "service_name": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "paid",
+        "fulfilled",
+        "refunded"
+      ],
+      "default": "paid"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "customer_name",
+    "service_name",
+    "amount"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "name": "Service",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Content",
+        "Creative",
+        "Funnel",
+        "Growth",
+        "Automation",
+        "Branding"
+      ]
+    },
+    "price": {
+      "type": "number"
+    },
+    "delivery_days": {
+      "type": "number",
+      "default": 3
+    },
+    "deliverables": {
+      "type": "string"
+    },
+    "popular": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "live",
+        "draft",
+        "retired"
+      ],
+      "default": "live"
+    }
+  },
+  "required": [
+    "name",
+    "price",
+    "category"
+  ]
+}

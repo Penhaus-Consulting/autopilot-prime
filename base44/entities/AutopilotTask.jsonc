@@ -1,0 +1,57 @@
+{
+  "name": "AutopilotTask",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "agent": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Sales",
+        "Content",
+        "Creative",
+        "Fulfillment",
+        "Growth",
+        "Ops"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "done",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "scheduled_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "result": {
+      "type": "string"
+    },
+    "revenue_impact": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ]
+}

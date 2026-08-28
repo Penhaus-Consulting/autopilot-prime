@@ -1,0 +1,51 @@
+{
+  "name": "Agent",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "specialty": {
+      "type": "string"
+    },
+    "persona": {
+      "type": "string"
+    },
+    "system_prompt": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "training"
+      ],
+      "default": "active"
+    },
+    "accent": {
+      "type": "string",
+      "default": "emerald"
+    },
+    "runs_today": {
+      "type": "number",
+      "default": 0
+    },
+    "autonomy": {
+      "type": "string",
+      "enum": [
+        "full",
+        "supervised",
+        "manual"
+      ],
+      "default": "supervised"
+    }
+  },
+  "required": [
+    "name",
+    "role"
+  ]
+}

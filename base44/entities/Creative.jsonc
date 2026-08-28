@@ -1,0 +1,54 @@
+{
+  "name": "Creative",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "TikTok",
+        "YouTube",
+        "Instagram",
+        "Meta Ads",
+        "Universal"
+      ]
+    },
+    "hook": {
+      "type": "string"
+    },
+    "script": {
+      "type": "string"
+    },
+    "angle": {
+      "type": "string"
+    },
+    "spend": {
+      "type": "number",
+      "default": 0
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0
+    },
+    "roas": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Testing",
+        "Winner",
+        "Scaling",
+        "Killed"
+      ],
+      "default": "Testing"
+    }
+  },
+  "required": [
+    "title",
+    "platform"
+  ]
+}

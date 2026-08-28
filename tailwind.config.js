@@ -2,6 +2,10 @@
 module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+    safelist: [
+      { pattern: /bg-(emerald|sky|amber|fuchsia|violet|rose)-400\/10/, },
+      { pattern: /text-(emerald|sky|amber|fuchsia|violet|rose)-400/, },
+    ],
   theme: {
   	extend: {
   		opacity: Object.fromEntries(Array.from({ length: 101 }, (_, i) => [i, `${i / 100}`])),
