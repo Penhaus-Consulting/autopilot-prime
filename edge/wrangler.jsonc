@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "penhaus-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+  // Cloudflare-hosted open model. No Anthropic/OpenAI key, no per-token vendor bill.
+  "ai": { "binding": "AI" },
+  // Per-IP throttle so bots can't burn the daily free Workers AI allocation.
+  "ratelimits": [
+    {
+      "name": "CHAT_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ],
+  "vars": {
+    "MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "APP_URL": "https://penhaus.example.com",
+    "ALLOWED_ORIGINS": "https://penhaus.example.com",
+    "LEAD_ENDPOINT": ""
+  }
+  // Secret (set with `npx wrangler secret put EDGE_SHARED_SECRET`):
+  //   EDGE_SHARED_SECRET - must match the same secret on the Base44 captureLead function.
+}
