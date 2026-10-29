@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Layers, Plus, X, Play, Pencil, Trash2, Zap } from "lucide-react";
+import { Layers, Plus, X, Pencil, Trash2, Zap } from "lucide-react";
 import FormSelect from "@/components/FormSelect";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
